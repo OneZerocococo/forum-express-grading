@@ -7,23 +7,89 @@
       <h3>{{userProfile.name}}</h3>
       <p>{{userProfile.email}}</p>
       <br>
-      {{#ifCond userProfile.id user.id}}
-      <a href="/users/{{user.id}}/edit" class="btn btn-primary">edit</a>
+      <p>{{comments.length}} 已評論餐廳</p>
+      <p>{{userProfile.FavoritedRestaurants.length}} 收藏的餐廳</p>
+      <p>{{userProfile.Followings.length}} followings</p>
+      <p>{{userProfile.Followers.length}} followers</p>
+      {{#ifCond userProfile.id loginUser.id}}
+      <a href="/users/{{loginUser.id}}/edit" class="btn btn-primary">edit</a>
+      {{else}}
+      {{#if userProfile.isFollowed }}
+      <form action="/following/{{userProfile.id}}?_method=DELETE" method="POST" style="display: contents;">
+        <button type="submit" class="btn btn-danger">取消追蹤</button>
+      </form>
+      {{else}}
+      <form action="/following/{{userProfile.id}}" method="POST" style="display: contents;">
+        <button type="submit" class="btn btn-primary">追蹤</button>
+      </form>
+      {{/if}}
       {{/ifCond}}
   </div>
 </div>
-<div class="card mt-3">
-  <h5 class="card-header">{{comments.length}}已評論餐廳</h5>
-  <div class="card-body">
-    {{#if comments}}
-    {{#each comments}}
-    <a href="/restaurants/{{this.restaurantId}}" style="text-decoration:none;">
-      <img src="{{this.Restaurant.image}}" title="{{this.Restaurant.name}}" class="m-3"
-        style="height:100px; width:100px; object-fit:cover">
-    </a>
-    {{/each}}
-    {{else}}
-    尚未有任何評論
-    {{/if}}
+<div class="row">
+  <div class="col-md-4">
+    <div class="card mt-3">
+      <h5 class="card-header">{{userProfile.Followings.length}} followings(追蹤者)</h5>
+      <div class="card-body">
+        {{#if userProfile.Followings}}
+        {{#each userProfile.Followings}}
+        <a href="/users/{{this.id}}" style="text-decoration:none;">
+          <img src="{{#if this.image}}{{this.image}}{{else}}https://png.pngtree.com/png-clipart/20210310/original/pngtree-black-default-avatar-png-image_5944719.jpg{{/if}}" title="{{this.name}}" class="m-2"
+            style="height:100px; width:100px; object-fit:cover">
+        </a>
+        {{/each}}
+        {{else}}
+        尚未追蹤任何人
+        {{/if}}
+      </div>
+    </div>
+    <div class="card mt-3">
+      <h5 class="card-header">{{userProfile.Followers.length}} followers(追隨者)</h5>
+      <div class="card-body">
+        {{#if userProfile.Followers}}
+        {{#each userProfile.Followers}}
+        <a href="/users/{{this.id}}" style="text-decoration:none;">
+          <img src="{{#if this.image}}{{this.image}}{{else}}https://png.pngtree.com/png-clipart/20210310/original/pngtree-black-default-avatar-png-image_5944719.jpg{{/if}}" title="{{this.name}}" class="m-2"
+            style="height:100px; width:100px; object-fit:cover">
+        </a>
+        {{/each}}
+        {{else}}
+        尚未有任何追隨者
+        {{/if}}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card mt-3">
+      <h5 class="card-header">{{comments.length}} 已評論餐廳</h5>
+      <div class="card-body">
+        {{#if comments}}
+        {{#each comments}}
+        <a href="/restaurants/{{this.restaurantId}}" style="text-decoration:none;">
+          <img src="{{this.Restaurant.image}}" title="{{this.Restaurant.name}}" class="m-3"
+            style="height:100px; width:100px; object-fit:cover">
+        </a>
+        {{/each}}
+        {{else}}
+        尚未有任何評論
+        {{/if}}
+      </div>
+    </div>
+    <div class="card mt-3">
+      <h5 class="card-header">{{userProfile.FavoritedRestaurants.length}} 已收藏餐廳</h5>
+      <div class="card-body">
+        {{#if userProfile.FavoritedRestaurants}}
+        {{#each userProfile.FavoritedRestaurants}}
+        <a href="/restaurants/{{this.id}}" style="text-decoration:none;">
+          <img src="{{this.image}}" title="{{this.name}}" class="m-3"
+            style="height:100px; width:100px; object-fit:cover">
+        </a>
+        {{/each}}
+        {{else}}
+        尚未有任何收藏
+        {{/if}}
+      </div>
+    </div>
   </div>
 </div>
+

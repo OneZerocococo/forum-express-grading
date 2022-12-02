@@ -39,18 +39,27 @@ const userController = {
   },
   getUser: (req, res, next) => {
     return Promise.all([
-      User.findByPk(req.params.id, { raw: true }),
+      User.findByPk(req.params.id, {
+        include: [
+          { model: Restaurant, as: 'FavoritedRestaurants' },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' }
+        ]
+      }),
       Comment.findAll({
         where: { userId: req.params.id },
         include: Restaurant,
         raw: true,
-        nest: true
+        nest: true,
+        group: 'restaurant_id'
       })
     ])
-      .then(([userProfile, comments]) => {
-        if (!userProfile) throw new Error("User doesn't exist.")
+      .then(([user, comments]) => {
+        if (!user) throw new Error("User doesn't exist.")
+        const userProfile = user.toJSON()
+        userProfile.isFollowed = req.user.Followings.some(f => f.id === userProfile.id)
         res.render('users/profile', {
-          user: getUser(req),
+          loginUser: getUser(req),
           userProfile,
           comments
         })
