@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs')
 const db = require('../models')
 const { imgurFileHandler } = require('../helpers/file-helpers')
 const { getUser } = require('../helpers/auth-helpers')
+const { sequelize, Sequelize } = require('../models')
 const { User, Restaurant, Comment, Favorite, Like, Followship } = db
 const userController = {
   signUpPage: (req, res) => {
@@ -51,7 +52,7 @@ const userController = {
         include: Restaurant,
         raw: true,
         nest: true,
-        group: 'restaurant_id'
+        attributes: [sequelize.fn('DISTINCT', Sequelize.col('restaurant_id')), 'restaurantId']
       })
     ])
       .then(([user, comments]) => {
